@@ -4,7 +4,6 @@ import "./DragDropFileInput.css";
 interface FileInputProps {
   sendChange: (files: File[]) => void;
   file: string;
-  mode: boolean;
 }
 const CAMERA_MODE = true;
 const FILE_MODE = false;
@@ -12,10 +11,13 @@ const FILE_MODE = false;
 const DragDropFileInput: React.FC<FileInputProps> = ({
   sendChange,
   file,
-  mode,
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [cameraModeSelection, toggleCamera] = useState(false);
+  const cameraSwitch = useRef<HTMLDivElement | null>(null);
+  const [mode, setMode] = useState<boolean>(FILE_MODE);
+
   const [cameraMode, setCameraMode] = useState<"environment" | "user">(
     "environment",
   );
@@ -143,9 +145,21 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
     );
   };
 
+  const handleCameraToggle = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    toggleCamera(!cameraModeSelection);
+    if (cameraModeSelection) {
+      setMode(true)
+      cameraSwitch.current!.classList.add("active");
+    } else {
+      setMode(false)
+      cameraSwitch.current!.classList.remove("active");
+    }
+  };
+
   return (
     <div className="drag-drop-container">
-      <h3 className="title">Attach a document</h3>
+      <h3 className="title">{cameraModeSelection ?"Attach a document":"Take a picture"}</h3>
 
       <div className="entry-wrapper">
         <div className={`input-wrapper ${mode == FILE_MODE ? "active" : ""}`}>
@@ -167,6 +181,19 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
           >
             <embed id="preview" src={file} className={file ? "active" : ""} />
           </label>
+          <div
+            className={`switch ${FILE_MODE ? "active" : ""}`}
+            id="camera-switch"
+            ref={cameraSwitch}
+            onClick={handleCameraToggle}
+          >
+            <label>
+              File Selection
+              <input type="checkbox" checked={cameraModeSelection} onChange={() => toggleCamera(!cameraModeSelection)} />
+              <span className="lever"></span>
+              Camera
+            </label>
+          </div>
         </div>
 
         <div
@@ -185,6 +212,19 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
               Capture{" "}
             </button>
             <button onClick={toggleCameraMode}>Switch Camera</button>
+            <div
+            className={`switch ${FILE_MODE ? "active" : ""}`}
+            id="camera-switch"
+            ref={cameraSwitch}
+            onClick={handleCameraToggle}
+          >
+            <label>
+              File Selection
+              <input type="checkbox" checked={cameraModeSelection} onChange={() => toggleCamera(!cameraModeSelection)} />
+              <span className="lever"></span>
+              Camera
+            </label>
+          </div>
           </div>
           <canvas
             id="canvas"
