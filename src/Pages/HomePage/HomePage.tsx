@@ -1,4 +1,4 @@
-import { StrictMode, useState, useRef } from "react";
+import { StrictMode, useState } from "react";
 import "./HomePage.css";
 import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
 import FileList from "../../Components/FileList/FileList";
@@ -8,20 +8,12 @@ function HomePage() {
   const [files, setFiles] = useState<File[]>([]);
 
   const [toShow, setShow] = useState("");
-  const [cameraMode, toggleCamera] = useState(false);
-  const cameraSwitch = useRef<HTMLDivElement | null>(null);
   const reader = new FileReader();
   reader.onload = (e) => {
     const newFile = e!.target!.result! as string;
     setShow(newFile);
   };
 
-  /**
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const field = e.target! as HTMLInputElement;
-    setForm({ ...form, [field.name]: field.value });
-  };
-  */
   const handlePhotoChange = (newFiles: File[]) => {
     if (newFiles!.length > 0) {
       setFiles([...files, ...newFiles]);
@@ -51,15 +43,6 @@ function HomePage() {
     }
   };
 
-  const handleCameraToggle = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    toggleCamera(!cameraMode);
-    if (cameraMode) {
-      cameraSwitch.current!.classList.add("active");
-    } else {
-      cameraSwitch.current!.classList.remove("active");
-    }
-  };
 
   return (
     <StrictMode>
@@ -68,24 +51,10 @@ function HomePage() {
           <DragDropFileInput
             sendChange={handlePhotoChange}
             file={toShow}
-            mode={cameraMode}
           />
           <button className="submit-btn" type="submit" onClick={Submit}>
             Submit
           </button>
-          <div
-            className={`switch ${cameraMode ? "active" : ""}`}
-            id="camera-switch"
-            ref={cameraSwitch}
-            onClick={handleCameraToggle}
-          >
-            <label>
-              File Selction
-              <input type="checkbox" />
-              <span className="lever"></span>
-              Camera
-            </label>
-          </div>
           <FileList
             files={files}
             onSelectedChange={handleSelectedChange}
