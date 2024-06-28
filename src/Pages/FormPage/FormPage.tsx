@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, StrictMode } from "react";
 import "./FormPage.css";
-import Carousel from "../../Components/Carousel/Carousel";
+import Carousel from "../../Components/Carousel/Carousel.tsx";
 import { useLocation, useNavigate } from "react-router-dom";
 import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import SectionComponent from "../../Components/Section/Section.tsx";
